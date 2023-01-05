@@ -1,10 +1,15 @@
 package org.example.Easy;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class Solution {
     public static void main(String[] args) {
+        //4. Longest Substring Without Repeating Characters
+        int maxLength = lengthOfLongestSubstring_v2("abcabcbb");
+        System.out.println(maxLength);
+
         //3. Merge two sorted lists
         ListNode n1 = new ListNode(1);
         ListNode n2 = new ListNode(3);
@@ -38,6 +43,39 @@ public class Solution {
         for(int i: result2) {
             System.out.print(i);
         }
+    }
+
+    //4. Longest Substring Without Repeating Characters
+    public static int lengthOfLongestSubstring_v2(String s) {
+        int maxLength = 0;
+        Map<Character, Integer> characters = new HashMap<>();
+        for (int right=0, left=0; right<s.length(); right++) {
+            char currentChar = s.charAt(right);
+            if (characters.containsKey(currentChar) && characters.get(currentChar) >= left) {
+                left = characters.get(currentChar) + 1;
+            }
+            maxLength = Math.max(maxLength, right -left + 1);
+            characters.put(currentChar, right);
+        }
+        return maxLength;
+    }
+
+    public static int lengthOfLongestSubstring(String s) {
+        int maxLength = 0;
+        for (int i=0; i<s.length(); i++) {
+            StringBuilder currentSubString = new StringBuilder();
+            for (int j=i; j<s.length(); j++) {
+                if (currentSubString.indexOf(String.valueOf(s.charAt(j))) != -1) {
+                    break;
+                }
+                currentSubString.append(s.charAt(j));
+                /*if (currentSubString.length() > maxLength) {
+                    maxLength = currentSubString.length();
+                }*/
+                maxLength = Math.max(maxLength, currentSubString.length());
+            }
+        }
+        return maxLength;
     }
 
     //3. Merge two sorted lists
