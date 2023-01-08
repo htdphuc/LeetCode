@@ -6,9 +6,14 @@ import java.util.Stack;
 
 public class Solution {
     public static void main(String[] args) {
-        //4. Longest Substring Without Repeating Characters
-        int maxLength = lengthOfLongestSubstring_v2("abcabcbb");
-        System.out.println(maxLength);
+        // 125. Valid Palindrome
+        String s1 = "A man, a plan, a canal: Panama";
+        System.out.println(isPalindrome(s1));
+
+        // 121. Best Time to Buy and Sell Stock
+        int[] prices = {7, 1, 5, 3, 6, 4};
+        int maxProfit = maxProfit(prices);
+        System.out.println(maxProfit);
 
         //3. Merge two sorted lists
         ListNode n1 = new ListNode(1);
@@ -39,43 +44,56 @@ public class Solution {
             System.out.print(i);
         }
         System.out.println();
-        int[] result2 = twoSum_HashMap(nums, target);
+        int[] result2 = twoSum_HashMap_v2(nums, target);
         for(int i: result2) {
             System.out.print(i);
         }
     }
 
-    //4. Longest Substring Without Repeating Characters
-    public static int lengthOfLongestSubstring_v2(String s) {
-        int maxLength = 0;
-        Map<Character, Integer> characters = new HashMap<>();
-        for (int right=0, left=0; right<s.length(); right++) {
-            char currentChar = s.charAt(right);
-            if (characters.containsKey(currentChar) && characters.get(currentChar) >= left) {
-                left = characters.get(currentChar) + 1;
+    // 125. Valid Palindrome
+    /* A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.
+    * Alphanumeric characters include letters and numbers.
+    * Given a string s, return true if it is a palindrome, or false otherwise.
+    * Input: s = "A man, a plan, a canal: Panama"
+    * Output: true
+    * Explanation: "amanaplanacanalpanama" is a palindrome.*/
+    public static boolean isPalindrome(String s) {
+        StringBuilder currentString = new StringBuilder();
+        for(int i = 0; i < s.length(); i++) {
+            if (Character.isLetter(s.charAt(i)) || Character.isDigit(s.charAt(i))) {
+                currentString.append(s.charAt(i));
             }
-            maxLength = Math.max(maxLength, right -left + 1);
-            characters.put(currentChar, right);
         }
-        return maxLength;
+        String cleanedString = currentString.toString().toLowerCase();
+        for (int i = 0; i < cleanedString.length() / 2; i++) {
+            for (int j = cleanedString.length() - 1; j >= cleanedString.length() / 2; j--) {
+                if (cleanedString.charAt(i) != cleanedString.charAt(j)) {
+                    return false;
+                }
+                i++;
+            }
+        }
+        return true;
     }
 
-    public static int lengthOfLongestSubstring(String s) {
-        int maxLength = 0;
-        for (int i=0; i<s.length(); i++) {
-            StringBuilder currentSubString = new StringBuilder();
-            for (int j=i; j<s.length(); j++) {
-                if (currentSubString.indexOf(String.valueOf(s.charAt(j))) != -1) {
-                    break;
-                }
-                currentSubString.append(s.charAt(j));
-                /*if (currentSubString.length() > maxLength) {
-                    maxLength = currentSubString.length();
-                }*/
-                maxLength = Math.max(maxLength, currentSubString.length());
+    // 121. Best Time to Buy and Sell Stock
+    /*You are given an array prices where prices[i] is the price of a given stock on the i-th day.
+     * You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
+     * Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+     * Input: prices = [7,1,5,3,6,4]
+     * Output: 5
+     */
+    public static int maxProfit(int[] prices) {
+        int maxProfit = 0;
+        int minPrice = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] < minPrice) {
+                minPrice = prices[i];
+            } else {
+                maxProfit = Math.max(maxProfit, prices[i] - minPrice);
             }
         }
-        return maxLength;
+        return maxProfit;
     }
 
     //3. Merge two sorted lists
@@ -157,39 +175,30 @@ public class Solution {
     }
 
     //1. twoSum: O(n^2)
+    /* Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+    * You may assume that each input would have exactly one solution, and you may not use the same element twice.
+    * You can return the answer in any order.
+    * EX: Input: nums = [3,2,4], target = 6
+          Output: [1,2] */
     public static int[] twoSum(int[] nums, int target) {
         for (int i=0; i<nums.length - 1; i++) {
-            int temp = 0;
-            for (int j=1; j<nums.length; j++) {
-                temp = nums[i] + nums[j];
-                if (temp == target) {
+            for (int j=i+1; j<nums.length; j++) {
+                if ((nums[i] + nums[j]) == target) {
                     return new int[] {i, j};
                 }
             }
-        }
-        return null;
-    }
-
-    public static int[] twoSum_HashMap(int[] nums, int target) {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (int i=0; i<nums.length; i++) {
-            int num = nums[i];
-            if (hashMap.get(target - num) != null) {
-                return new int[] {hashMap.get(target - num), i};
-            }
-            hashMap.put(num, i);
         }
         return nums;
     }
 
     public static int[] twoSum_HashMap_v2(int[] nums, int target) {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        HashMap<Integer, Integer> complements = new HashMap<>();
         for (int i=0; i<nums.length; i++) {
-            Integer complementIndex = hashMap.get(nums[i]);
+            Integer complementIndex = complements.get(nums[i]);
             if (complementIndex != null) {
                 return new int[] {i, complementIndex};
             }
-            hashMap.put(target - nums[i], i);
+            complements.put(target - nums[i], i);
         }
         return nums;
     }
