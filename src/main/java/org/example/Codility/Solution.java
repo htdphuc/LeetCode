@@ -3,8 +3,10 @@ package org.example.Codility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Solution {
     /* 1.
@@ -145,7 +147,7 @@ public class Solution {
         return n;
     }
 
-    /*
+    /* 6. findSmallestPositiveInteger
     * given an array A of N integers, returns the smallest positive integer (greater than 0) that does not occur in A.
     * For example, given A = [1, 3, 6, 4, 1, 2], the function should return 5.
     * Given A = [1, 2, 3], the function should return 4.
@@ -173,14 +175,83 @@ public class Solution {
         return min;
     }
 
+    /* 7. TapeEquilibrium
+    * A non-empty array A consisting of N integers is given. Array A represents numbers on a tape.
+    * Any integer P, such that 0 < P < N, splits this tape into two non-empty parts: A[0], A[1], ..., A[P − 1] and A[P], A[P + 1], ..., A[N − 1].
+    * The difference between the two parts is the value of: |(A[0] + A[1] + ... + A[P − 1]) − (A[P] + A[P + 1] + ... + A[N − 1])|
+    * Write a function:
+    *   class Solution { public int solution(int[] A); }
+    * that, given a non-empty array A of N integers, returns the minimal difference that can be achieved.
+    * */
+    // O(N) --> 100%
+    public static int tapeEquilibrium(int[] A) {
+        int sum = 0;
+        for (int i=0; i<A.length; i++) {
+            sum += A[i];
+        }
+        int min = Integer.MAX_VALUE;
+        int leftSum = 0;
+        for (int p=1; p<A.length; p++) {
+            leftSum += A[p-1];
+            int rightSum = sum - leftSum;
+            min = Math.min(min, Math.abs(leftSum - rightSum));
+        }
+        return min;
+    }
+
+    /* 8. FrogRiverOne
+    * Find the earliest time when a frog can jump to the other side of a river.
+    * */
+    // O(N)
+    public static int frogRiverOne(int X, int[] A) {
+        Set<Integer> elements = new HashSet<>();
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] <= X) {
+                elements.add(A[i]);
+            }
+            if (elements.size() == X) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /* 9. PermCheck
+    * A non-empty array A consisting of N integers is given.
+    * A permutation is a sequence containing each element from 1 to N once, and only once.
+    * Write a function: given an array A, returns 1 if array A is a permutation and 0 if it is not
+    * EX: [4, 3, 1, 2]  --> is a permutation
+    *     [4, 3, 1] --> isn't a permutation, because value 2 is missing
+    * */
+    // Detected time complexity: O(N) or O(N * log(N))
+    public static int permCheck(int[] A) {
+        A = Arrays.stream(A).sorted().toArray();
+        if (A.length < 1 || A[0] != 1) {
+            return 0;
+        }
+        for (int i = 0; i < A.length -1; i++) {
+            if (A[i] != A[i+1] - 1) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+
     public static void main(String[] args) {
+        // (3, [1, 3, 1, 3, 2, 1, 3]) --> 4
+        // (5, [1, 3, 1, 4, 2, 3, 5, 4]) --> 6
+        // (2, [2, 2, 2, 2]) --> -1
+        int x = frogRiverOne(5, new int[] {1, 3, 1, 4, 2, 3, 5, 4});
+        System.out.println(x);
+
         System.out.println(findSmallestPositiveInteger(new int[] {1, 3, 6, 4, 1, 2}));
 
         // 5. PermMissingElem
         int missElement = findMissingElement(new int[] {});
         System.out.println(missElement);
 
-        /*// 4. FrogImp
+        // 4. FrogImp
         int nums = minNumsOfFrogJump(10, 85, 30);
         System.out.println(nums);
 
@@ -199,7 +270,7 @@ public class Solution {
 
         // 1. binary gap
         int result = findBinaryGap(2);
-        System.out.println(result);*/
+        System.out.println(result);
     }
 
     public static void printArray(int[] A) {
